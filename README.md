@@ -18,3 +18,10 @@ make docker-build-linux
 # docker build darwin
 make docker-build-darwin
 ```
+
+
+## other
+
+#### create gmail credentials
+
+if you want to use yourself credentials, follow this [quickstart/go](https://developers.google.com/gmail/api/quickstart/go)
