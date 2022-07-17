@@ -4,7 +4,8 @@ FROM golang:1.18.4-alpine3.16 as builder
 COPY . /app/smtp-proxy
 
 # build
-RUN cd /app/smtp-proxy && go mod tidy && CGO_ENABLED=0 make
+RUN apk add --no-cache git build-base linux-headers && \
+    cd /app/smtp-proxy && go mod tidy && CGO_ENABLED=0 make
 
 ######## Start a new stage #######
 FROM alpine:3.16
