@@ -39,5 +39,5 @@ jobs:
         with:
           context: .
           push: true
-          platforms: linux/amd64
+          platforms: linux/amd64, linux/arm64
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/smtp-proxy:latest, ${{ secrets.DOCKER_HUB_USERNAME }}/smtp-proxy:${{ steps.meta.outputs.tag }}
