@@ -3,6 +3,7 @@ package gmail
 import (
 	"context"
 	"encoding/base64"
+	"golang.org/x/oauth2"
 	"strings"
 
 	"github.com/DusanKasan/parsemail"
@@ -18,13 +19,15 @@ type Gmail struct {
 	service *gmail.Service
 }
 
-func NewService(token *config.GmailToken, credentials string) (*Gmail, error) {
-	cfg, err := google.ConfigFromJSON([]byte(MailCredentials), token.Permission)
+func NewService(token *config.GmailToken, credentialsPath string) (*Gmail, error) {
+	credentials, err := ReadGmailCredentialsOrDefault(credentialsPath)
+	cfg, err := google.ConfigFromJSON(credentials, token.Permission)
 	if err != nil {
 		return nil, err
 	}
-	ctx := context.Background()
-	service, err := gmail.NewService(ctx, option.WithTokenSource(cfg.TokenSource(ctx, token.Oauth)))
+	ctx := context.WithValue(context.Background(), oauth2.HTTPClient, config.HttpClient)
+	service, err := gmail.NewService(ctx,
+		option.WithTokenSource(cfg.TokenSource(ctx, token.Oauth)))
 	if err != nil {
 		return nil, err
 	}

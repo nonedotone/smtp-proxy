@@ -7,7 +7,7 @@ import (
 	"os"
 
 	"github.com/nonedotone/golog"
-	"github.com/nonedotone/smtp-proxy/config"
+	spcfg "github.com/nonedotone/smtp-proxy/config"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/gmail/v1"
@@ -46,14 +46,15 @@ func GetTokenFromWeb(config *oauth2.Config) (*oauth2.Token, error) {
 		return nil, err
 	}
 
-	tok, err := config.Exchange(context.TODO(), authCode)
+	ctx := context.WithValue(context.Background(), oauth2.HTTPClient, spcfg.HttpClient)
+	tok, err := config.Exchange(ctx, authCode)
 	if err != nil {
 		golog.Debugf("config exchange error %v", err)
 		return nil, err
 	}
 	return tok, nil
 }
-func InitConfig(permission string, credentials []byte) (*config.Config, error) {
+func InitConfig(permission string, credentials []byte) (*spcfg.Config, error) {
 	golog.Debugf("init config permission %s, credentials %s\n", permission, credentials)
 	auth2Cfg, err := google.ConfigFromJSON(credentials, permission)
 	if err != nil {
@@ -65,9 +66,9 @@ func InitConfig(permission string, credentials []byte) (*config.Config, error) {
 		golog.Debugf("google token from web error %v\n", err)
 		return nil, err
 	}
-	gmailToken := &config.GmailToken{
+	gmailToken := &spcfg.GmailToken{
 		Permission: permission,
 		Oauth:      oauth,
 	}
-	return &config.Config{Type: config.GmailType, Token: gmailToken}, nil
+	return &spcfg.Config{Type: spcfg.GmailType, Token: gmailToken}, nil
 }

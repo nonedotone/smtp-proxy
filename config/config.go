@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
+	"net/http"
+	"time"
 
 	"golang.org/x/oauth2"
 )
@@ -53,3 +55,5 @@ func LoadConfig(f string) (*Config, error) {
 	err = json.Unmarshal(bz, &cfg)
 	return &cfg, err
 }
+
+var HttpClient = &http.Client{Transport: http.DefaultTransport, Timeout: 60 * time.Second}
